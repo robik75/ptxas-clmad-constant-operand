@@ -2,6 +2,8 @@
 
 ptxas in CUDA 13.4.92 (13.4 Update 2) computes a wrong 128-bit carry-less product on sm_120 at `-O2` and `-O3`. It happens when ptxas propagates the constant one into a `clmad.lo.u64` and folds that instruction into a 64-bit copy of its other operand: it emits only the low 32-bit half of the copy, and the high half reads a register that is never written. The driver's JIT compiler (615.71.09) produces the same wrong result from the PTX. `-Xptxas -O1` and `-O0` are correct.
 
+Reported to NVIDIA as bug 6955062 (2026-10-19).
+
 The kernel is executed and every result is checked on the host against a bitwise carry-less multiply. The SASS listings come from the toolkit's own `cuobjdump` (13.4.92), which decodes `CLMAD`.
 
 ## Reproduce
